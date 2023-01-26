@@ -1,2 +1,2 @@
-# PhyllotaxisVisualizer
- A VR music visualizer using customizable phyllotaxy patterns
+# DaydreamVR
+ A custom VR music visualizer built in Unity Engine
