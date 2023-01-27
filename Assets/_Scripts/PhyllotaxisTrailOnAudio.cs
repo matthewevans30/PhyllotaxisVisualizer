@@ -11,7 +11,7 @@ public class PhyllotaxisTrailOnAudio : MonoBehaviour
     public Color _trailColor;
 
     public float Degree, Scale;
-    private float Number;
+    public float Number;
     public int StepSize, MaxIteration;
     public int NumberStart;
 
@@ -20,17 +20,22 @@ public class PhyllotaxisTrailOnAudio : MonoBehaviour
     private bool _isLerping;
     private Vector3 _startPosition, _endPosition;
 
-    private int _currentIteration;
+    public int _currentIteration;
     private TrailRenderer _trailRenderer;
 
     private Vector2 _phyllotaxisPosition;
 
-    private float _lerpPosTimer, _lerpPosSpeed;     //timer goes 0-1 at lerpPosSpeed
+    public float _lerpPosTimer;
+    public float _lerpPosSpeed;     //timer goes 0-1 at lerpPosSpeed
     public Vector2 _lerpPosSpeedMinMax;             //min max of lerpPosSpeed
     public AnimationCurve _lerpPosAnimCurve;        //specifies how number increases/decreases
     private bool _forward;              //keeps track of which direction we are going
 
+    private float _trailLength;
+
     public bool Repeat, Invert;         //determines whether to repeat or invert when we hit maxIteration
+
+    public bool InEditMode;
 
     //Scaling
     public bool UseScaleAnimation, UseScaleCurve;
@@ -59,10 +64,21 @@ public class PhyllotaxisTrailOnAudio : MonoBehaviour
             _isLerping = true;
             SetLerpPositions();
         }
+
+        _trailLength = _trailRenderer.time;
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            Debug.Log("Entering Edit Mode");
+            StartEditMode();
+        }
+
+        if (InEditMode) {
+            PatternEditMode();
+            return;
+        }
 
         if (UseScaleAnimation)
         {
@@ -92,7 +108,7 @@ public class PhyllotaxisTrailOnAudio : MonoBehaviour
 
                 if (_lerpPosTimer >= 1)
                 {
-                    _lerpPosTimer -= 1;
+                    _lerpPosTimer = 0;
                     if (_forward)
                     {
                         Number += StepSize;
@@ -109,7 +125,7 @@ public class PhyllotaxisTrailOnAudio : MonoBehaviour
                         SetLerpPositions();
                     }
                     else
-                    {      //current iteration has hit 0 or maxIteration
+                    {   //current iteration has hit 0 or maxIteration
                         if (Repeat)
                         {
                             if (Invert)
@@ -119,8 +135,6 @@ public class PhyllotaxisTrailOnAudio : MonoBehaviour
                             }
                             else
                             {
-                                Number = NumberStart;
-                                _currentIteration = 0;
                                 
                                 ResetPattern();
                                 //_trailRenderer.Clear();
@@ -169,13 +183,37 @@ public class PhyllotaxisTrailOnAudio : MonoBehaviour
         _endPosition = new Vector3(_phyllotaxisPosition.x, _phyllotaxisPosition.y, 0);
     }
 
-    void ResetPattern()
+    public void ResetPattern()
     {
+        Number = NumberStart;
+        _currentIteration = 0;
         _phyllotaxisPosition = CalculatePhyllotaxis(Degree, Scale, Number);
         transform.localPosition = _origin;
         _startPosition = transform.localPosition;
         _endPosition = new Vector3(_phyllotaxisPosition.x, _phyllotaxisPosition.y, 0);
+        _trailRenderer.Clear();
     }
+
+    public void StartEditMode() {
+        ResetPattern();
+        _trailRenderer.time = 10000;
+        _currentIteration = 0;
+        Number = NumberStart;
+        InEditMode = true;
+    }
+
+    void PatternEditMode() {
+        if(_currentIteration < MaxIteration) {
+            _phyllotaxisPosition = CalculatePhyllotaxis(Degree, Scale, Number);
+            transform.localPosition = new Vector3(_phyllotaxisPosition.x, _phyllotaxisPosition.y, 0);
+            Number += StepSize;
+            _currentIteration++;
+        }
+        
+    }
+
+
+    
 
 }
 

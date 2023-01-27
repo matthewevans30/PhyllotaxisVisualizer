@@ -6,6 +6,7 @@ using UnityEngine.Rendering.Universal;
 
 public class AudioAnalysis : MonoBehaviour
 {
+
     public AudioSource audiosource;
     public float[] samples = new float[512];        // 0 to 20,000 hz compacted into 128 samples
     public float[] freqBand = new float[8];
