@@ -18,7 +18,7 @@ public class EditorInput : MonoBehaviour
     public void ToggleEditors(InputAction.CallbackContext context) {
         editorStatus++;
         editorStatus = editorStatus % 3;
-
+        print(editorStatus);
         switch (editorStatus) {
             case 0:
                 _editorCanvas1.SetActive(false);
@@ -28,7 +28,7 @@ public class EditorInput : MonoBehaviour
                 _editorCanvas1.SetActive(true);
                 _editorCanvas2.SetActive(false);
                 break;
-            case 3:
+            case 2:
                 _editorCanvas1.SetActive(false);
                 _editorCanvas2.SetActive(true);
                 break;
